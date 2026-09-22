@@ -40,10 +40,12 @@ TOP_K = 5               # how many chunks to pull back per question
 #
 # LOWER IS BETTER: 0.3 is a close match, 0.9 is unrelated.
 #
-# 0.6 is a reasonable starting point, not a right answer. Milestone 4 has you
-# measure your own two groups of distances and put the cutoff in the gap.
-# Most corpora land somewhere between 0.45 and 0.75.
-THRESHOLD = 0.6
+# Milestone 4. Measured on city_guides at the Milestone 3 chunking:
+#   my five questions        0.180 - 0.542
+#   the five OUT_OF_SCOPE    0.803 - 0.975
+# Nothing lands between 0.542 and 0.803. 0.70 sits in that gap, deliberately
+# nearer the far end — see the README for why.
+THRESHOLD = 0.70
 
 
 # ─── Models ──────────────────────────────────────────────────────────────────

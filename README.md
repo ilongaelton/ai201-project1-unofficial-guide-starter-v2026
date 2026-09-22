@@ -136,10 +136,7 @@ one complete section and say which town they are about.
 ```
 ```
 
-**My relevance cutoff:**
-
-<!-- TODO: the number you settle on, and the sentence explaining how you got
-     there from the two groups below. -->
+**My relevance cutoff: 0.70**, set in `config.py`.
 
 I ran my five questions and the five in `OUT_OF_SCOPE` through
 `python app.py retrieve` and recorded the best distance for each. The two
@@ -161,11 +158,34 @@ groups do not overlap and there is nothing at all between 0.542 and 0.803.
 Worst in-corpus question: 0.542. Best out-of-corpus question: 0.803. The gap is
 0.260 wide and its midpoint is 0.673.
 
-These are the numbers after the Milestone 3 re-chunk. I measured once before it
-as well, and the whole in-corpus group moved: 0.347/0.447/0.559/0.356/0.562
-became 0.180/0.499/0.542/0.282/0.439. Four of five improved, one got slightly
-worse. That is the reason a cutoff has to be measured against the chunking it
-will actually run on.
+**Why 0.70 and not the midpoint.** Any number between 0.543 and 0.802 refuses
+all five out-of-corpus questions and passes all five real ones, so the
+measurement alone does not pick one — I had to decide what I would rather get
+wrong. 0.70 leaves 0.158 of headroom above my worst real question and 0.103
+below the nearest out-of-corpus one, so it is biased toward letting questions
+through rather than refusing them.
+
+That is on purpose, and it is because refusing is not the only defence this
+system has. The gate is the first layer; `generate.py`'s grounding instruction
+is the second, and it tells the model to say it doesn't have enough information
+when the documents don't cover the question. A question that slips past the
+gate still has to get past that. A real question that the gate wrongly refuses
+gets nothing — there is no second layer on that side. So I would rather the
+cutoff err toward answering, and my five questions only sample a narrow slice
+of the ways someone might phrase a question about these guides. The 0.542 I
+measured is not a ceiling on how far a legitimate question can land.
+
+I also started at 0.6, which is inside the gap and works, and moved it because
+0.6 is only 0.058 above my worst real question while wasting 0.20 of the room
+on the other side. The right number was not the default; it just happened not
+to be wrong.
+
+**One caveat I want on the record.** These are the numbers after the Milestone
+3 re-chunk. I measured once before it as well, and the whole in-corpus group
+moved: 0.347/0.447/0.559/0.356/0.562 became 0.180/0.499/0.542/0.282/0.439. Four
+of five improved, one got slightly worse. A cutoff is only valid against the
+chunking it was measured on, so if I change the chunker again in unit 2 this
+number has to be re-measured rather than carried over.
 
 ## How I Used AI
 
