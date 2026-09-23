@@ -224,27 +224,65 @@ chunk. That is where the 150-character floor came from, and it is in
 
 ## Run Log — Before
 
-<!-- Your five criteria, three runs each. `python run_eval.py --label before`
-     runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
-     writes it all into results/ for you. Targets come from criteria.md; the
-     verdict column is your call.
-
-     Criterion 3 is measured in one deterministic pass rather than three, so
-     the same number goes in all three run columns. That's correct, not lazy.
-
-     Milestone 1. -->
-
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
 | 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
 | 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. Chunks stop where the documents stop | 4 of 5 |  |  |  |  |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks stop where the documents stop | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 | 5. Named source is the source the fact came from | 4 of 5 |  |  |  |  |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+Criteria 3 and 4 are filled in; 1, 2 and 5 are not yet, because all three
+judge a generated answer and `run_eval.py` has not been run against a live
+model yet.
+
+**Criteria 3 and 4 come out identical in all three columns, and that is
+correct rather than a sign I did not really re-run.** Neither one involves a
+model call. Criterion 3 is retrieval, which is deterministic, compared against
+a fixed cutoff. Criterion 4 is a property of the chunker, which produces the
+same 94 chunks every time it runs. There is one number for each and it goes in
+all three columns. Criteria 1, 2 and 5 are the ones that can move between runs,
+because those are the ones the model participates in.
+
+### Real output — criterion 3
+
+Produced by `gate.py::check` on the results of `store.py::search`, cutoff 0.70,
+over the five questions in `questions.py::OUT_OF_SCOPE`:
+
+```
+refused  best 0.803  What is the capital of Mongolia?
+refused  best 0.835  What is the recommended dosage of ibuprofen for a headache?
+refused  best 0.836  How do I write a for loop in Rust?
+refused  best 0.888  How do I change the oil in a diesel engine?
+refused  best 0.975  Who won the 1994 World Cup?
+-> 5 of 5 refused
+```
+
+Every one is refused before it reaches the model, so criterion 3 costs no API
+calls. The closest out-of-corpus question sits at 0.803 against a cutoff of
+0.70 — a margin of 0.103, which is the headroom I argued for in unit 1.
+
+### Real output — criterion 4
+
+Produced by `chunker.py::split_documents` over the fourteen documents in
+`city_guides`:
+
+```
+94 chunks; 94 start at a boundary and end on a finished sentence
+shortest 174, longest 761, under 150: 0
+sampled 5 by stride: 5 of 5 pass
+```
+
+The criterion asks for at least 4 of 5 sampled chunks, and sampling five by
+stride the way `app.py chunks` does gives 5 of 5. The whole-corpus number is
+stronger than the sample: all 94 pass, not just the five I looked at.
+
+### Real output — criteria 1, 2 and 5
+
+<!-- TODO: from results/run_*_before.md once run_eval.py has run. -->
+
+<!-- Paste the REAL output for each — the actual text the system produced, not
+     a description of it. Name the file and function that produced it. -->
 
 ## Verdicts
 
