@@ -279,10 +279,31 @@ stronger than the sample: all 94 pass, not just the five I looked at.
 
 ### Real output — criteria 1, 2 and 5
 
-<!-- TODO: from results/run_*_before.md once run_eval.py has run. -->
+**Not measured yet.** There is no real output to paste here, and I would rather
+say that than describe output I do not have.
+
+All three of these criteria judge a generated answer, so each one needs
+`generate.py::answer_from_chunks` to return something. I ran
+`python run_eval.py --label before` on 2026-09-27 and it stopped on the first
+question — the API key in my `.env` is still the placeholder from
+`.env.example`, so the call to the model came back `400 INVALID_ARGUMENT`,
+`API_KEY_INVALID`. `run_eval.py::write_report` only writes once every question
+has finished, so nothing reached `results/` and there is no
+`results/run_*_before.md` to quote from.
+
+Nothing above this line is affected. Criteria 3 and 4 were measured without a
+model — criterion 3 is refused at the gate before any call is made, and
+criterion 4 is a property of the chunker — which is why those two have real
+output and these three do not.
+
+What this takes to finish: a valid `GEMINI_API_KEY` in `.env`, then re-run
+`python run_eval.py --label before`, commit the run log it writes into
+`results/`, and paste the answers for criteria 1, 2 and 5 here.
 
 <!-- Paste the REAL output for each — the actual text the system produced, not
      a description of it. Name the file and function that produced it. -->
+
+<!-- TODO: from results/run_*_before.md once run_eval.py has run. -->
 
 ## Verdicts
 
